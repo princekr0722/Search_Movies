@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #cont {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            text-align: center;
+            padding: 10px;
+            border: 3px solid rgba(142, 45, 166, 0.385);
+            border-radius: 10px;
+            background-color: rgb(253, 247, 255);
+        }
+
+        #srch {
+            height: 35px;
+            width: 250px;
+            font-size: 20px;
+            border-radius: 10px;
+            margin: 5px;
+            border: 3px solid rgba(142, 45, 166, 0.385);
+            padding: 0 10px;
+            background-color: rgb(253, 247, 255);
+        }
+
+        #srchBtn {
+            height: 35px;
+            width: 150px;
+            border-radius: 10px;
+            border: 3px solid rgba(142, 45, 166, 0.385);
+            margin: 5px;
+            background-color: rgba(199, 111, 226, 0.759);
+            color: white;
+            font-weight: 700;
+        }
+
+        #ratings {
+            color: white;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .class1 {
+            padding: 0px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0);
+            height: 450px;
+            width: 302px;
+        }
+
+        #poster {
+            object-fit: cover;
+        }
+
+        .class2 {
+            position: absolute;
+            background-color: rgba(237, 237, 237, 0);
+            margin: auto;
+            height: 452px;
+            width: 305px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: right;
+        }
+
+        #layer2nd>h2 {
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            background-color: rgb(158, 74, 172);
+            color: rgb(255, 255, 255);
+            padding: 10px;
+            border-radius: 10px 0 0 0;
+            margin: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="text" name="" id="srch" placeholder="search movies..."><button id="srchBtn">Search</button>
+    <div id="cont">
+        <p id="notice"></p>
+        <div id="layer">
+            <div id="layer2nd"></div>
+            <img src="https://www.inspirationde.com/wp-content/uploads/2019/09/cd514331234507.564a1d2324e4e.gif" alt=""
+                id="poster">
+        </div>
+        <h2 id="title"></h2>
+        <b></b>
+        <h3 id="director"></h3>
+        <p id="released"></p>
+        <p id="rated"></p>
+        <p id="time"></p>
+        <p id="lang"></p>
+    </div>
+</body>
+
+</html>
+<script>
+    document.querySelector("#srchBtn").addEventListener("click", () => {
+        var input = document.querySelector("#srch").value;
+        if (input != "") {
+            searchMovies(input);
+        }
+    })
+    function searchMovies(input) {
+        url = "https://www.omdbapi.com/?i=tt3896198&apikey=c9162619&t=" + input;
+        let x = fetch(url);
+        x.then((res) => res.json()).then((data) => {
+            //work here
+            console.log(data)
+            if (data.Response == "True") {
+                poster = data.Poster;
+                title = data.Title;
+                rating = data.Ratings[0].Value;
+                director = data.Director
+                released = data.Released;
+                rated = data.Rated;
+                runtime = data.Runtime
+                lang = data.Language
+
+                document.querySelector("#layer").setAttribute("class", "class1")
+                document.querySelector("#layer2nd").setAttribute("class", "class2")
+
+                document.querySelector("#notice").innerHTML = "";
+                document.querySelector("#poster").setAttribute("src", poster);
+                document.querySelector("#title").innerHTML = title;
+
+                Ratings = document.querySelector("b");
+                Ratings.setAttribute("id", "ratings");
+                Ratings.style.backgroundColor = "rgb(255, 255, 255)";
+                Ratings.innerText = rating;
+
+                if (eval(rating) >= 0.85) {
+                    h2 = document.createElement("h2");
+                    h2.innerText = "Recommended"
+                    document.querySelector("#layer2nd").append(h2);
+                } else {
+                    document.querySelector("#layer2nd").innerHTML = null;
+                }
+
+                document.querySelector("#director").innerHTML = director;
+                document.querySelector("#released").innerHTML = released;
+                document.querySelector("#rated").innerHTML = rated;
+                document.querySelector("#time").innerHTML = runtime;
+                document.querySelector("#lang").innerHTML = lang;
+            } else {
+                document.querySelector("#layer").removeAttribute("class", "class1")
+                document.querySelector("#layer2nd").removeAttribute("class", "class2")
+                document.querySelector("#poster").setAttribute("src", "https://assets.materialup.com/uploads/c59dbe42-a767-4d04-baed-bfcaaf8acaa9/attachment.gif");
+                document.querySelector("#notice").innerHTML = "Ops Movie Not Found :/";
+                document.querySelector("#layer2nd").innerHTML = null;
+                document.querySelector("b").innerText = "";
+                document.querySelector("b").style.backgroundColor = "rgba(160, 81, 45, 0)";
+                document.querySelector("#title").innerHTML = "";
+                document.querySelector("#director").innerHTML = "";
+                document.querySelector("#released").innerHTML = "";
+                document.querySelector("#rated").innerHTML = "";
+                document.querySelector("#time").innerHTML = '';
+                document.querySelector("#lang").innerHTML = '';
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+</script>
